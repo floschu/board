@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:cloudflare": "tsc -b && vite build --mode cloudflare",
+    "build:cloudflare": "node scripts/inject-d1-id.mjs && tsc -b && vite build --mode cloudflare",
     "deploy:cloudflare": "npm run build:cloudflare && wrangler pages deploy dist",
     "lint": "eslint .",
     "preview": "vite preview",

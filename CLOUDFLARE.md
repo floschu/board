@@ -39,9 +39,11 @@ npx wrangler login
 **1. Create the D1 database and its tables**
 
 ```bash
-npx wrangler d1 create board
-# paste the printed database_id into wrangler.toml (REPLACE_WITH_YOUR_DATABASE_ID)
+npx wrangler d1 create board            # prints a database_id (UUID) — save it
+export D1_DATABASE_ID=<paste-the-uuid>  # the build fills wrangler.toml from this
+node scripts/inject-d1-id.mjs           # writes the id into wrangler.toml locally
 npx wrangler d1 execute board --remote --file=./schema.sql
+git checkout wrangler.toml              # restore the committed placeholder
 ```
 
 **2. Create the Pages project — pick a deploy style**
@@ -53,12 +55,15 @@ npx wrangler d1 execute board --remote --file=./schema.sql
 - **B. CLI (direct upload).** `npx wrangler pages project create board --production-branch main`,
   then deploy from your machine on demand with `npm run deploy:cloudflare`.
 
-**3. Bind D1 to the Pages project**
+**3. Provide the database id to the build**
 
-Cloudflare dashboard → **Workers & Pages → board → Settings → Functions → D1 database
-bindings** → add variable name `DB` → database `board`.
-(The binding in `wrangler.toml` is only used by local `wrangler pages dev`; the deployed
-site uses this dashboard binding.)
+`wrangler.toml` ships a placeholder D1 id so the repo stays generic; the build fills it in
+from the `D1_DATABASE_ID` environment variable (see `scripts/inject-d1-id.mjs`), and the
+`DB` binding itself is defined in `wrangler.toml` — so no dashboard binding is needed.
+
+- **Push-to-deploy:** your Pages project → **Settings → Environment variables** → add a
+  **build** variable `D1_DATABASE_ID` = the UUID from step 1, then redeploy.
+- **CLI deploy:** `export D1_DATABASE_ID=<uuid>` before `npm run deploy:cloudflare`.
 
 ## Deploy
 

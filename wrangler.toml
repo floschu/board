@@ -9,10 +9,9 @@ pages_build_output_dir = "dist"
 compatibility_date = "2025-08-19"
 
 # D1 (SQLite) binding used by functions/api/data.js.
-#   1) npx wrangler d1 create board
-#   2) paste the printed database_id below
-#   3) add the same binding (variable name: DB) in the Pages project dashboard
-#      under Settings -> Functions -> D1 database bindings
+# The database_id stays a placeholder in the repo; the build fills it in from the
+# D1_DATABASE_ID env var (see scripts/inject-d1-id.mjs and CLOUDFLARE.md). Set
+# D1_DATABASE_ID as a Cloudflare Pages build variable, or export it before a CLI deploy.
 [[d1_databases]]
 binding = "DB"
 database_name = "board"
